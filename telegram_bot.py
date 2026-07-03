@@ -17,8 +17,11 @@ import memory
 import research
 import synthesis
 
+import re as _re
+
 _MODEL = "claude-opus-4-5"
 _MACRO_CACHE = Path(__file__).parent / "macro_cache.txt"
+_BARE_TICKER = _re.compile(r"^[A-Z]{1,5}$")
 
 
 def _client() -> anthropic.Anthropic:
@@ -72,6 +75,8 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
     if text.startswith("$"):
         ticker = text[1:].strip().upper()
         await handle_ticker_query(ticker, update, context)
+    elif _BARE_TICKER.match(text.strip()):
+        await handle_ticker_query(text.strip().upper(), update, context)
     elif "refresh macro" in text.lower():
         if _MACRO_CACHE.exists():
             _MACRO_CACHE.unlink()

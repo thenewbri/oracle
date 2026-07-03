@@ -19,8 +19,6 @@ def get_price_and_fundamentals(ticker: str) -> dict | None:
     info = yf.Ticker(ticker).info
 
     market_cap = info.get("marketCap")
-    if market_cap is None or market_cap < config.MIN_MARKET_CAP:
-        return None
 
     return {
         "symbol": info.get("symbol"),

@@ -48,8 +48,13 @@ def run_morning_briefing() -> None:
         packages = []
         for ticker in tickers:
             package = research.research_ticker(ticker)
-            if package is not None:
-                packages.append(package)
+            if package is None:
+                continue
+            market_cap = package["fundamentals"].get("market_cap")
+            if market_cap is None or market_cap < config.MIN_MARKET_CAP:
+                print(f"[briefing] {ticker} skipped — market cap {market_cap} below threshold", flush=True)
+                continue
+            packages.append(package)
 
         if len(packages) < 2:
             asyncio.new_event_loop().run_until_complete(
