@@ -190,8 +190,10 @@ async def handle_photo_message(update: Update, context: ContextTypes.DEFAULT_TYP
         await update.message.reply_text("Could not identify any tickers in that image.")
         return
 
-    for ticker in tickers[:3]:
-        await handle_ticker_query(ticker, update, context)
+    await update.message.reply_text(
+        f"📸 I can see these tickers: {', '.join(tickers)}\n\n"
+        "Reply with the one you want me to research."
+    )
 
 
 # ---------------------------------------------------------------------------
