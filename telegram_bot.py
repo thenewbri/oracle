@@ -70,7 +70,9 @@ async def send_briefing(recommendations_text: str, macro_summary: str) -> None:
 # ---------------------------------------------------------------------------
 
 async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    text = update.message.text or ""
+    text = (update.message.text or update.message.caption or "").strip()
+    if not text:
+        return
 
     if text.startswith("$"):
         ticker = text[1:].strip().upper()
