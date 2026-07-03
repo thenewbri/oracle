@@ -158,8 +158,10 @@ async def handle_photo_message(update: Update, context: ContextTypes.DEFAULT_TYP
                         {
                             "type": "text",
                             "text": (
-                                "Extract any stock tickers, company names, or trade signals from this image. "
-                                "Return only a plain list, one item per line."
+                                "Extract stock ticker symbols from this image. Return ONLY the ticker symbols "
+                                "as a plain list, one per line, in uppercase. Examples of valid tickers: "
+                                "AAPL, MSFT, XLF, UNH. Do not include company names, descriptions, or any "
+                                "other text."
                             ),
                         },
                     ],
@@ -181,6 +183,8 @@ async def handle_photo_message(update: Update, context: ContextTypes.DEFAULT_TYP
         t for t in re.findall(r"\b[A-Z]{1,5}\b", response_text)
         if t not in STOPWORDS
     ))
+
+    print(f"[photo] extracted tickers: {tickers}", flush=True)
 
     if not tickers:
         await update.message.reply_text("Could not identify any tickers in that image.")
