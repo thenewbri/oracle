@@ -11,6 +11,13 @@ import config
 
 _TICKER_RE = re.compile(r"^[A-Z]{1,5}$")
 
+_STOPWORDS = {
+    "A", "I", "IN", "OF", "OR", "AT", "TO", "BE", "IS", "IT", "ON", "NO", "SO", "DO", "GO",
+    "BY", "MY", "AN", "AS", "WE", "HE", "ME", "US", "UP", "AM", "PM", "THE", "AND", "FOR",
+    "NOT", "BUT", "PUT", "ARE", "WAS", "HAS", "HAD", "DID", "GET", "GOT", "NEW", "NOW",
+    "IV", "OI", "ETF", "CEO", "CFO", "IPO", "SEC", "USD", "YTD", "EPS", "PE",
+}
+
 _MODEL = "claude-opus-4-5"
 
 
@@ -113,7 +120,7 @@ def get_pelosi_tickers_for_sector(sector: str, etf_signal: str) -> list[str]:
         text_blocks = [block.text for block in response.content if hasattr(block, "text")]
         full_text = "\n".join(text_blocks)
         candidates = [line.strip().upper().lstrip("-*0123456789. ") for line in full_text.splitlines()]
-        tickers = [c for c in candidates if _TICKER_RE.match(c)]
+        tickers = [c for c in candidates if _TICKER_RE.match(c) and c not in _STOPWORDS]
         return tickers[:5]
     except Exception as e:
         print(f"get_pelosi_tickers_for_sector({sector}) failed: {e}", file=sys.stderr)
